@@ -25,6 +25,7 @@ func NewTelegramBot(dbClient db.IClient, logger *zap.Logger) *TelegramBot {
 	return &TelegramBot{
 		dbClient: dbClient,
 		bot:      bot,
+		logger:   logger,
 	}
 }
 
@@ -38,7 +39,12 @@ func (r *TelegramBot) Start() {
 
 	updates := r.bot.GetUpdatesChan(config)
 
+	var err error
+
 	for update := range updates {
-		r.process(&update)
+		err = r.process(&update)
+		if err != nil {
+			r.logger.Error("failed to process update", zap.Error(err))
+		}
 	}
 }

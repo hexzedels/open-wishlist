@@ -2,5 +2,6 @@ package models
 
 type User struct {
 	ID       int64
-	username string
+	Username string
+	State    string
 }
