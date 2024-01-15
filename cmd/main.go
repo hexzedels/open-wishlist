@@ -11,6 +11,8 @@ func main() {
 
 	postgresClient := db.NewPostgresClient()
 
-	bot := core.NewTelegramBot(postgresClient)
+	logger := run.Logger.Named("telegram bot")
+
+	bot := core.NewTelegramBot(postgresClient, logger)
 	bot.Start()
 }
