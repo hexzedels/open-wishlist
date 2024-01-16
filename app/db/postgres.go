@@ -18,6 +18,8 @@ type IClient interface {
 	GetWishlist(ctx context.Context, wishlist *models.Wishlist) error
 	CreateWishlist(ctx context.Context, wishlist *models.Wishlist) error
 	ListWishlists(ctx context.Context, user *models.User) ([]*models.Wishlist, error)
+
+	CreateItem(ctx context.Context, item *models.Item) error
 }
 
 type PostgresClient struct {
@@ -119,6 +121,15 @@ func (r *PostgresClient) GetWishlist(ctx context.Context, wishlist *models.Wishl
 	row := r.conn.QueryRowContext(ctx, queryWishlist, wishlist.ID)
 
 	if err := row.Scan(&wishlist.ID, &wishlist.OwnerID, &wishlist.Name); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (r *PostgresClient) CreateItem(ctx context.Context, item *models.Item) error {
+	_, err := r.conn.ExecContext(ctx, insertItem, item.WishlistID, item.Name)
+	if err != nil {
 		return err
 	}
 

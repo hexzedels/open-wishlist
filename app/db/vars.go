@@ -13,6 +13,11 @@ const (
 )
 
 const (
+	insertItem = "INSERT INTO items (wishlist_id, name) values ($1, $2)"
+	queryItems = "SELECT * FROM items WHERE wishlist_id=$1"
+)
+
+const (
 	queryInitUsers = `CREATE TABLE IF NOT EXISTS users (
 		id bigint NOT NULL,
 		username text NOT NULL,
@@ -32,7 +37,7 @@ const (
 		id bigserial NOT NULL,
 		wishlist_id bigint NOT NULL,
 		name text NOT NULL,
-		url text NOT NULL,
+		url text,
 		PRIMARY KEY (id)
 	  );`
 )

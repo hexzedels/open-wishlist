@@ -16,12 +16,17 @@ const (
 	MessageWishlistCreated = `Создал новый вишлист "%s"`
 	MessageWishlistList    = "Вот список твоих вишлистов.\nВыбери тот, с которым сейчам будешь работать. Ты всегда сможешь изменить его в этом меню"
 	MessageWishlistSet     = `Поставил вишлист "%s" текущим`
+	MessageItemNew         = "Добавляем новый предмет в вишлист\nНапиши название предмета ниже"
+	MessageItemURL         = "У тебя есть ссылка на сайт, где можно купить добавляемый предмет?"
+	MessageCreatedItem     = "Добавил"
 )
 
 const (
 	StateHome           = "home"
 	StateWishlistNew    = "wishlist_new"
 	StateWishlistChoose = "wishlist_choose"
+	StateItemNew        = "item_new"
+	StateItemName       = "item_name"
 )
 
 const (
@@ -31,5 +36,6 @@ const (
 )
 
 const (
-	CallbackWishlist = "wishlist"
+	CallbackWishlist  = "wishlist"
+	CallbackItemURLNo = "item_url_no"
 )
