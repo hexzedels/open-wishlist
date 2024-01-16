@@ -13,7 +13,7 @@ const (
 )
 
 const (
-	insertItem = "INSERT INTO items (wishlist_id, name) values ($1, $2)"
+	insertItem = "INSERT INTO items (wishlist_id, name, url) values ($1, $2, $3)"
 	queryItems = "SELECT * FROM items WHERE wishlist_id=$1"
 )
 

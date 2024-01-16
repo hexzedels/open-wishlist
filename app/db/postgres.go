@@ -20,6 +20,7 @@ type IClient interface {
 	ListWishlists(ctx context.Context, user *models.User) ([]*models.Wishlist, error)
 
 	CreateItem(ctx context.Context, item *models.Item) error
+	ListItems(ctx context.Context, user *models.User) ([]*models.Item, error)
 }
 
 type PostgresClient struct {
@@ -128,10 +129,32 @@ func (r *PostgresClient) GetWishlist(ctx context.Context, wishlist *models.Wishl
 }
 
 func (r *PostgresClient) CreateItem(ctx context.Context, item *models.Item) error {
-	_, err := r.conn.ExecContext(ctx, insertItem, item.WishlistID, item.Name)
+	_, err := r.conn.ExecContext(ctx, insertItem, item.WishlistID, item.Name, item.URL)
 	if err != nil {
 		return err
 	}
 
 	return nil
+}
+
+func (r *PostgresClient) ListItems(ctx context.Context, user *models.User) ([]*models.Item, error) {
+	var out []*models.Item
+
+	rows, err := r.conn.QueryContext(ctx, queryItems, user.WishlistID)
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next() {
+		temp := &models.Item{}
+
+		if err := rows.Scan(&temp.ID, &temp.WishlistID, &temp.Name, &temp.URL); err != nil {
+			r.logger.Error("failed to scan row", zap.Error(err))
+			continue
+		}
+
+		out = append(out, temp)
+	}
+
+	return out, nil
 }

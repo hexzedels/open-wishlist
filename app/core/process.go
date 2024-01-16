@@ -66,6 +66,8 @@ func (r *TelegramBot) handleMessage(ctx context.Context, user *models.User, upda
 		return r.handleChooseWishlist(ctx, user, update)
 	case sdk.ButtonNewItem:
 		return r.handleNewItemButton(ctx, user)
+	case sdk.ButtonListItems:
+		return r.handleButtonListItems(ctx, user)
 	}
 
 	switch user.State {

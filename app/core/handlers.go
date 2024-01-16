@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"strconv"
+	"strings"
 
 	"openwishlist/app/sdk"
 	"openwishlist/app/sdk/models"
@@ -18,6 +19,11 @@ func (r *TelegramBot) handleStart(user *models.User) error {
 		tgbotapi.NewKeyboardButtonRow(
 			tgbotapi.NewKeyboardButton(
 				sdk.ButtonNewItem,
+			),
+		),
+		tgbotapi.NewKeyboardButtonRow(
+			tgbotapi.NewKeyboardButton(
+				sdk.ButtonListItems,
 			),
 		),
 		tgbotapi.NewKeyboardButtonRow(
@@ -187,4 +193,31 @@ func (r *TelegramBot) handleItemName(ctx context.Context, user *models.User, upd
 	}
 
 	return r.dbClient.UpdateUser(ctx, user)
+}
+
+func (r *TelegramBot) handleButtonListItems(ctx context.Context, user *models.User) error {
+	items, err := r.dbClient.ListItems(ctx, user)
+	if err != nil {
+		return err
+	}
+
+	b := strings.Builder{}
+	b.WriteString(sdk.MessagedListItems)
+	for i, item := range items {
+		b.WriteString(fmt.Sprintf(sdk.MessageTableFormat, i, item.ID, item.Name))
+	}
+
+	config := tgbotapi.NewMessage(user.ID, b.String())
+	config.ParseMode = tgbotapi.ModeMarkdownV2
+
+	if _, err := r.bot.Send(config); err != nil {
+		user.State = sdk.StateHome
+		if err := r.dbClient.UpdateUser(ctx, user); err != nil {
+			r.logger.Error("failed to update user after failed bot answer", zap.Error(err))
+		}
+
+		return err
+	}
+
+	return nil
 }
