@@ -208,7 +208,7 @@ func (r *TelegramBot) handleButtonListItems(ctx context.Context, user *models.Us
 	}
 
 	config := tgbotapi.NewMessage(user.ID, b.String())
-	config.ParseMode = tgbotapi.ModeMarkdownV2
+	config.ParseMode = tgbotapi.ModeMarkdown
 
 	if _, err := r.bot.Send(config); err != nil {
 		user.State = sdk.StateHome

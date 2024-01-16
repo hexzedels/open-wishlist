@@ -2,7 +2,7 @@ version: "3.9"
 services:
   postgres:
     image: postgres:15
-    container_name: postgres
+    container_name: postgres-open-wishlist
     environment:
       POSTGRES_DB: "prod_db"
       POSTGRES_USER: "prod_user"
@@ -21,6 +21,7 @@ services:
         context: .
     environment:
         POSTGRES: postgresql://prod_user:production_pass@postgres:5432/prod_db?sslmode=disable
+        DEBUG: ${DEBUG-false}
         TOKEN: ${TOKEN}
 volumes:
     postgres:
