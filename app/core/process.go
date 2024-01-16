@@ -6,7 +6,6 @@ import (
 	"errors"
 	"openwishlist/app/sdk"
 	"openwishlist/app/sdk/models"
-	"strconv"
 	"time"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
@@ -46,18 +45,8 @@ func (r *TelegramBot) handleCallback(ctx context.Context, user *models.User, upd
 	case sdk.CallbackWishlist:
 		return r.handleWishlistSet(ctx, user, id)
 	}
+
 	return nil
-}
-
-func (r *TelegramBot) handleWishlistSet(ctx context.Context, user *models.User, id string) error {
-	wid, err := strconv.Atoi(id)
-	if err != nil {
-		return err
-	}
-
-	user.ID = int64(wid)
-
-	return r.dbClient.UpdateUser(ctx, user)
 }
 
 func (r *TelegramBot) handleCommand(ctx context.Context, user *models.User, update *tgbotapi.Update) error {
@@ -74,7 +63,7 @@ func (r *TelegramBot) handleMessage(ctx context.Context, user *models.User, upda
 	case sdk.ButtonNewWishlist:
 		return r.handleNewWishlistButton(ctx, user)
 	case sdk.ButtonExistingWishlist:
-		return r.handleListAllWishlists(ctx, user, update)
+		return r.handleChooseWishlist(ctx, user, update)
 	}
 
 	switch user.State {

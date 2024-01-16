@@ -15,6 +15,7 @@ type IClient interface {
 	CreateUser(ctx context.Context, user *models.User) error
 	UpdateUser(ctx context.Context, user *models.User) error
 
+	GetWishlist(ctx context.Context, wishlist *models.Wishlist) error
 	CreateWishlist(ctx context.Context, wishlist *models.Wishlist) error
 	ListWishlists(ctx context.Context, user *models.User) ([]*models.Wishlist, error)
 }
@@ -58,7 +59,7 @@ func NewPostgresClient(ctx context.Context, connStr string) *PostgresClient {
 func (r *PostgresClient) GetUser(ctx context.Context, user *models.User) error {
 	row := r.conn.QueryRowContext(ctx, queryUser, user.ID)
 
-	if err := row.Scan(&user.ID, &user.Username, &user.State); err != nil {
+	if err := row.Scan(&user.ID, &user.Username, &user.State, &user.WishlistID); err != nil {
 		return err
 	}
 
@@ -66,7 +67,7 @@ func (r *PostgresClient) GetUser(ctx context.Context, user *models.User) error {
 }
 
 func (r *PostgresClient) CreateUser(ctx context.Context, user *models.User) error {
-	_, err := r.conn.ExecContext(ctx, insertUser, user.ID, user.Username, user.State)
+	_, err := r.conn.ExecContext(ctx, insertUser, user.ID, user.Username, user.State, user.WishlistID)
 	if err != nil {
 		return err
 	}
@@ -75,7 +76,7 @@ func (r *PostgresClient) CreateUser(ctx context.Context, user *models.User) erro
 }
 
 func (r *PostgresClient) UpdateUser(ctx context.Context, user *models.User) error {
-	_, err := r.conn.ExecContext(ctx, updateUser, user.State, user.ID)
+	_, err := r.conn.ExecContext(ctx, updateUser, user.State, user.WishlistID, user.ID)
 	if err != nil {
 		return err
 	}
@@ -84,7 +85,7 @@ func (r *PostgresClient) UpdateUser(ctx context.Context, user *models.User) erro
 }
 
 func (r *PostgresClient) CreateWishlist(ctx context.Context, wishlist *models.Wishlist) error {
-	_, err := r.conn.ExecContext(ctx, insertWishlist, wishlist.ID, wishlist.OwnerID, wishlist.Name)
+	_, err := r.conn.ExecContext(ctx, insertWishlist, wishlist.OwnerID, wishlist.Name)
 	if err != nil {
 		return err
 	}
@@ -112,4 +113,14 @@ func (r *PostgresClient) ListWishlists(ctx context.Context, user *models.User) (
 	}
 
 	return out, nil
+}
+
+func (r *PostgresClient) GetWishlist(ctx context.Context, wishlist *models.Wishlist) error {
+	row := r.conn.QueryRowContext(ctx, queryWishlist, wishlist.ID)
+
+	if err := row.Scan(&wishlist.ID, &wishlist.OwnerID, &wishlist.Name); err != nil {
+		return err
+	}
+
+	return nil
 }
