@@ -1,11 +1,23 @@
 package run
 
-import "go.uber.org/zap"
+import (
+	"os"
+
+	"openwishlist/app/sdk"
+
+	"go.uber.org/zap"
+)
 
 var Logger *zap.Logger
 
 func Init() {
-	logger, err := zap.NewProduction()
+	cfg := zap.NewProductionConfig()
+
+	if debug := os.Getenv(sdk.EnvDebug); debug != "" {
+		cfg.Level = zap.NewAtomicLevelAt(zap.DebugLevel)
+	}
+
+	logger, err := cfg.Build()
 	if err != nil {
 		panic(err)
 	}

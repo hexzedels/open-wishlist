@@ -34,6 +34,14 @@ func (r *TelegramBot) Start() {
 		r.logger.Info("stopped telegram bot")
 	}()
 
+	if err := tgbotapi.SetLogger(&TelegramLogger{r.logger}); err != nil {
+		panic(err)
+	}
+
+	if os.Getenv(sdk.EnvDebug) != "" {
+		r.bot.Debug = true
+	}
+
 	config := tgbotapi.NewUpdate(0)
 	config.Timeout = 60
 
