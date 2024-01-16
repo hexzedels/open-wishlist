@@ -9,6 +9,9 @@ Want to focus on privacy? Try this simple self-hosted telegram bot for managing 
 * Add items to selected wishlist
 * Show all items from wishlist
 
+## Where to try
+Visit [@openwishlist_bot](https://t.me/openwishlist_bot)
+
 ## How to run
 
 1. Clone repo
